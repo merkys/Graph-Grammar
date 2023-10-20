@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use ChemOnomatopist::Util::Graph qw( graph_replace );
 use Chemistry::OpenSMILES::Parser;
 use Graph::Grammar;
 use Scalar::Util qw( blessed );
@@ -16,6 +17,8 @@ sub is_S { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'S' }
 sub is_alkane { return exists $_[1]->{type} && $_[1]->{type} eq 'alkane' }
 sub is_ketone { return exists $_[1]->{type} && $_[1]->{type} eq 'ketone' }
 
+sub is_NH2 { return exists $_[1]->{type} && $_[1]->{type} eq 'NH2' }
+
 sub anything { return 1 }
 
 my @rules = (
@@ -26,6 +29,10 @@ my @rules = (
     [ \&is_C, \&is_C, ( \&is_H ) x 3, NO_MORE_VERTICES, { type => 'alkane' } ],
     [ \&is_C, \&is_alkane, ( \&is_H ) x 2, { type => 'alkane' } ],
     [ \&is_C, \&is_N, \&is_ketone, \&anything, NO_MORE_VERTICES, { type => 'amide' } ],
+
+    [ \&is_N, ( \&is_H ) x 3, { type => 'ammonia' } ],
+    [ \&is_N, ( \&is_H ) x 2, \&anything, sub { graph_replace( $_[0], { type => 'NH2' }, @_[1..3] ) } ],
+    [ \&is_NH2, \&is_NH2, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'hydrazine' }, @_[1..2] ) } ],
 );
 
 while( <> ) {

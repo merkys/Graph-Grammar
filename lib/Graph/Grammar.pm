@@ -4,6 +4,8 @@ use strict;
 use warnings;
 
 use ChemOnomatopist::Util::Graph qw( graph_replace );
+use List::Util qw( first );
+use Set::Object qw( set );
 
 sub parse
 {
@@ -25,14 +27,17 @@ sub parse
                 next unless $self_rule->( $graph, $vertex );
 
                 my @matching_neighbours;
+                my $matching_neighbours = set();
                 for my $i (0..$#rule) {
                     my $neighbour_rule = $rule[$i];
                     
                     if( ref $neighbour_rule eq 'CODE' ) {
-                        my @matches = grep { $neighbour_rule->( $graph, $_ ) } $graph->neighbours( $vertex );
-                        next VERTEX unless @matches;
-                        die "more than one hit\n" if @matches > 1;
-                        push @matching_neighbours, @matches;
+                        my $match = first { !$matching_neighbours->has( $_ ) &&
+                                            $neighbour_rule->( $graph, $_ ) }
+                                          $graph->neighbours( $vertex );
+                        next VERTEX unless $match;
+                        push @matching_neighbours, $match;
+                        $matching_neighbours->insert( $match );
                     } else {
                         next VERTEX unless $graph->degree( $vertex ) == @matching_neighbours;
                     }

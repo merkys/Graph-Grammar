@@ -13,8 +13,8 @@ sub is_H { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'H' }
 sub is_O { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'O' }
 
 my @rules = (
-    [ \&is_O, \&is_C, \&is_H, Graph::Grammar::Rule::NoMoreVertices->new, sub { return { type => 'hydroxy' } } ],
-    [ \&is_C, \&is_C, ( \&is_H ) x 3, Graph::Grammar::Rule::NoMoreVertices->new, sub { return { type => 'alkane' } } ],
+    [ \&is_O, \&is_C, \&is_H, Graph::Grammar::Rule::NoMoreVertices->new, { type => 'hydroxy' } ],
+    [ \&is_C, \&is_C, ( \&is_H ) x 3, Graph::Grammar::Rule::NoMoreVertices->new, { type => 'alkane' } ],
 );
 
 while( <> ) {

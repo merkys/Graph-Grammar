@@ -16,7 +16,7 @@ sub is_alkane { return exists $_[1]->{type} && $_[1]->{type} eq 'alkane' }
 my @rules = (
     [ \&is_O, \&is_C, \&is_H, NO_MORE_VERTICES, { type => 'hydroxy' } ],
     [ \&is_C, \&is_C, ( \&is_H ) x 3, NO_MORE_VERTICES, { type => 'alkane' } ],
-    [ \&is_C, \&is_alkane, ( \&is_H ) x 2, NO_MORE_VERTICES, { type => 'alkane' } ],
+    [ \&is_C, \&is_alkane, ( \&is_H ) x 2, { type => 'alkane' } ],
 );
 
 while( <> ) {

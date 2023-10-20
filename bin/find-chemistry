@@ -9,14 +9,23 @@ use Scalar::Util qw( blessed );
 
 sub is_C { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'C' }
 sub is_H { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'H' }
+sub is_N { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'N' }
 sub is_O { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'O' }
+sub is_S { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'S' }
 
 sub is_alkane { return exists $_[1]->{type} && $_[1]->{type} eq 'alkane' }
+sub is_ketone { return exists $_[1]->{type} && $_[1]->{type} eq 'ketone' }
+
+sub anything { return 1 }
 
 my @rules = (
     [ \&is_O, \&is_C, \&is_H, NO_MORE_VERTICES, { type => 'hydroxy' } ],
+    [ \&is_O, \&anything, NO_MORE_VERTICES, { type => 'ketone' } ],
+    [ \&is_O, \&is_alkane, \&anything, NO_MORE_VERTICES, { type => 'oxyalkane' } ],
+
     [ \&is_C, \&is_C, ( \&is_H ) x 3, NO_MORE_VERTICES, { type => 'alkane' } ],
     [ \&is_C, \&is_alkane, ( \&is_H ) x 2, { type => 'alkane' } ],
+    [ \&is_C, \&is_N, \&is_ketone, \&anything, NO_MORE_VERTICES, { type => 'amide' } ],
 );
 
 while( <> ) {

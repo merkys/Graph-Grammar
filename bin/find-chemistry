@@ -6,6 +6,7 @@ use warnings;
 use ChemOnomatopist::Util::Graph qw( graph_replace );
 use Chemistry::OpenSMILES::Parser;
 use Graph::Grammar;
+use Graph::Writer::Dot;
 use Scalar::Util qw( blessed );
 
 sub is_C { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'C' }
@@ -46,6 +47,10 @@ while( <> ) {
     my( $graph ) = $parser->parse( $_ );
     Graph::Grammar::parse( $graph, @rules );
 
-    use Data::Dumper;
-    print Dumper $graph->vertices;
+    for my $vertex ($graph->vertices) {
+        $graph->set_vertex_attribute( $vertex, 'label', exists $vertex->{symbol} ? $vertex->{symbol} : $vertex->{label} );
+    }
+
+    my $writer = Graph::Writer::Dot->new;
+    $writer->write_graph( $graph, '/dev/stdout' );
 }

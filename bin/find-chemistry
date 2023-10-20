@@ -26,6 +26,7 @@ my @rules = (
     [ \&is_O, \&anything, NO_MORE_VERTICES, { type => 'ketone' } ],
     [ \&is_O, \&is_alkane, \&anything, NO_MORE_VERTICES, { type => 'oxyalkane' } ],
 
+    # Rules to detect alkanes of any length
     [ \&is_C, ( \&is_H ) x 3, \&anything, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'alkane', length => 1 }, @_[1..4] ) } ],
     [ \&is_C, \&is_alkane, ( \&is_H ) x 2, sub { graph_replace( $_[0], { type => 'alkane', length => $_[2]->{length} + 1 }, @_[1..4] ) } ],
     [ \&is_C, ( \&is_alkane ) x 2, ( \&is_H ) x 2, NO_MORE_VERTICES, sub { graph_replace( shift @_, { type => 'alkane', length => $_[2]->{length} + $_[3]->{length} + 1 }, @_ ) } ],

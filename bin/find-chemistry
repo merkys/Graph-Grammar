@@ -5,16 +5,18 @@ use warnings;
 
 use Chemistry::OpenSMILES::Parser;
 use Graph::Grammar;
-use Graph::Grammar::Rule::NoMoreVertices;
 use Scalar::Util qw( blessed );
 
 sub is_C { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'C' }
 sub is_H { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'H' }
 sub is_O { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'O' }
 
+sub is_alkane { return exists $_[1]->{type} && $_[1]->{type} eq 'alkane' }
+
 my @rules = (
-    [ \&is_O, \&is_C, \&is_H, Graph::Grammar::Rule::NoMoreVertices->new, { type => 'hydroxy' } ],
-    [ \&is_C, \&is_C, ( \&is_H ) x 3, Graph::Grammar::Rule::NoMoreVertices->new, { type => 'alkane' } ],
+    [ \&is_O, \&is_C, \&is_H, NO_MORE_VERTICES, { type => 'hydroxy' } ],
+    [ \&is_C, \&is_C, ( \&is_H ) x 3, NO_MORE_VERTICES, { type => 'alkane' } ],
+    [ \&is_C, \&is_alkane, ( \&is_H ) x 2, NO_MORE_VERTICES, { type => 'alkane' } ],
 );
 
 while( <> ) {

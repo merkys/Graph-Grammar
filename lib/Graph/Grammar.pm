@@ -3,7 +3,12 @@ package Graph::Grammar;
 use strict;
 use warnings;
 
+use parent Exporter::;
+
+our @EXPORT = qw( NO_MORE_VERTICES );
+
 use ChemOnomatopist::Util::Graph qw( graph_replace );
+use Graph::Grammar::Rule::NoMoreVertices;
 use List::Util qw( first );
 use Set::Object qw( set );
 
@@ -55,5 +60,7 @@ sub parse
 
     return $graph;
 }
+
+sub NO_MORE_VERTICES { return Graph::Grammar::Rule::NoMoreVertices->new }
 
 1;

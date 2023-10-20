@@ -26,8 +26,11 @@ my @rules = (
     [ \&is_O, \&anything, NO_MORE_VERTICES, { type => 'ketone' } ],
     [ \&is_O, \&is_alkane, \&anything, NO_MORE_VERTICES, { type => 'oxyalkane' } ],
 
-    [ \&is_C, \&is_C, ( \&is_H ) x 3, NO_MORE_VERTICES, { type => 'alkane' } ],
-    [ \&is_C, \&is_alkane, ( \&is_H ) x 2, { type => 'alkane' } ],
+    [ \&is_C, ( \&is_H ) x 3, \&anything, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'alkane', length => 1 }, @_[1..4] ) } ],
+    [ \&is_C, \&is_alkane, ( \&is_H ) x 2, sub { graph_replace( $_[0], { type => 'alkane', length => $_[2]->{length} + 1 }, @_[1..4] ) } ],
+    [ \&is_C, ( \&is_alkane ) x 2, ( \&is_H ) x 2, NO_MORE_VERTICES, sub { graph_replace( shift @_, { type => 'alkane', length => $_[2]->{length} + $_[3]->{length} + 1 }, @_ ) } ],
+    [ \&is_alkane, \&is_alkane, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'alkane', length => $_[1]->{length} + $_[2]->{length} }, @_[1..2] ) } ],
+
     [ \&is_C, \&is_N, \&is_ketone, \&anything, NO_MORE_VERTICES, { type => 'amide' } ],
 
     [ \&is_N, ( \&is_H ) x 3, { type => 'ammonia' } ],

@@ -8,6 +8,7 @@ use parent Exporter::;
 our @EXPORT = qw( NO_MORE_VERTICES );
 
 use ChemOnomatopist::Util::Graph qw( graph_replace );
+use Clone qw( clone );
 use Graph::Grammar::Rule::NoMoreVertices;
 use List::Util qw( first );
 use Set::Object qw( set );
@@ -22,7 +23,8 @@ sub parse
     while( $changes ) {
         $changes = 0;
 
-        for my $rule (@rules) {
+        for my $i (0..$#rules) {
+            my $rule = $rules[$i];
             my @rule = @$rule;
             my $self_rule = shift @rule;
             my $action = pop @rule;
@@ -48,10 +50,12 @@ sub parse
                     }
                 }
 
+                print STDERR "apply rule $i\n";
+
                 if( ref $action eq 'CODE' ) {
                     $action->( $graph, $vertex, @matching_neighbours );
                 } else {
-                    graph_replace( $graph, $action, $vertex );
+                    graph_replace( $graph, clone( $action ), $vertex );
                 }
                 $changes++;
             }

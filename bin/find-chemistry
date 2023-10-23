@@ -24,6 +24,10 @@ sub is_hydroxy { return exists $_[1]->{type} && $_[1]->{type} eq 'hydroxy' }
 sub is_ketone { return exists $_[1]->{type} && $_[1]->{type} eq 'ketone' }
 
 sub is_NH2 { return exists $_[1]->{type} && $_[1]->{type} eq 'NH2' }
+sub is_cyano { return exists $_[1]->{type} && $_[1]->{type} eq 'cyano' }
+
+sub is_cycle { return exists $_[1]->{type} && $_[1]->{type} eq 'cycle' }
+sub is_benzene { return is_cycle( @_ ) && $_[1]->{atoms} eq 'CCCCCC' }
 
 sub anything { return 1 }
 
@@ -60,6 +64,10 @@ my @rules = (
     [ \&is_NH2, \&is_NH2, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'hydrazine' }, @_[1..2] ) } ],
 
     [ \&is_S, \&is_H, sub { graph_replace( $_[0], { type => 'sulfanyl' }, @_[1..2] ) } ],
+
+    [ \&is_benzene, \&is_hydroxy, sub { graph_replace( $_[0], { type => 'phenol' }, @_[1..2] ) } ],
+
+    [ \&is_C, \&is_cyano, \&is_cycle, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'carbonitrile' }, @_[1..2] ) } ],
 );
 
 while( <> ) {
@@ -71,7 +79,12 @@ while( <> ) {
     # Deal with cyclic components
     my @cyclic_components = cyclic_components( $graph );
     for my $cyclic_component (@cyclic_components) {
-        graph_replace( $graph, { type => 'cycle' }, $cyclic_component->vertices );
+        my $cycle = {
+            type => 'cycle',
+            length => scalar $cyclic_component->vertices,
+            atoms => join '', map { $_->{symbol} } $cyclic_component->vertices,
+        };
+        graph_replace( $graph, $cycle, $cyclic_component->vertices );
     }
 
     Graph::Grammar::parse( $graph, @rules );

@@ -55,6 +55,9 @@ my @rules = (
     [ \&is_C, ( \&is_N ) x 3, NO_MORE_VERTICES, # Guanidine
       sub { graph_replace( $_[0], { type => 'guanidine' }, @_[1..3] ) } ],
 
+    [ \&is_C, \&is_benzene, \&is_ketone, \&is_N, NO_MORE_VERTICES,
+      sub { graph_replace( $_[0], { type => 'benzamide' }, @_[1..4] ) } ],
+
     [ \&is_N, ( \&is_H ) x 3, { type => 'ammonia' } ],
     [ \&is_N, ( \&is_H ) x 2, \&anything, sub { graph_replace( $_[0], { type => 'NH2' }, @_[1..3] ) } ],
 
@@ -64,6 +67,7 @@ my @rules = (
     [ \&is_NH2, \&is_NH2, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'hydrazine' }, @_[1..2] ) } ],
 
     [ \&is_S, \&is_H, sub { graph_replace( $_[0], { type => 'sulfanyl' }, @_[1..2] ) } ],
+    [ \&is_S, \&is_ketone, ( \&anything ) x 2, NO_MORE_VERTICES, sub { graph_replace( $_[0], { type => 'sulfoxide' }, @_[1..2] ) } ],
 
     [ \&is_benzene, \&is_hydroxy, sub { graph_replace( $_[0], { type => 'phenol' }, @_[1..2] ) } ],
 

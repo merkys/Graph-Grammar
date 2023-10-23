@@ -27,7 +27,7 @@ sub is_NH2 { return exists $_[1]->{type} && $_[1]->{type} eq 'NH2' }
 sub is_cyano { return exists $_[1]->{type} && $_[1]->{type} eq 'cyano' }
 
 sub is_cycle { return exists $_[1]->{type} && $_[1]->{type} eq 'cycle' }
-sub is_benzene { return is_cycle( @_ ) && $_[1]->{atoms} eq 'CCCCCC' }
+sub is_benzene { return exists $_[1]->{type} && $_[1]->{type} eq 'benzene' }
 
 sub anything { return 1 }
 
@@ -84,6 +84,9 @@ while( <> ) {
             length => scalar $cyclic_component->vertices,
             atoms => join '', map { $_->{symbol} } $cyclic_component->vertices,
         };
+        if( $cycle->{atoms} eq 'CCCCCC' ) {
+            $cycle = { type => 'benzene' };
+        }
         graph_replace( $graph, $cycle, $cyclic_component->vertices );
     }
 

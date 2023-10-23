@@ -19,6 +19,7 @@ sub is_O { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'O' }
 sub is_S { return exists $_[1]->{symbol} && ucfirst( $_[1]->{symbol} ) eq 'S' }
 
 sub is_C_chain { return exists $_[1]->{type} && $_[1]->{type} eq 'C_chain' }
+sub is_carboxyl { return exists $_[1]->{type} && $_[1]->{type} eq 'carboxyl' }
 sub is_headless_C_chain { return exists $_[1]->{type} && $_[1]->{type} eq 'headless_C_chain' }
 sub is_hydroxy { return exists $_[1]->{type} && $_[1]->{type} eq 'hydroxy' }
 sub is_ketone { return exists $_[1]->{type} && $_[1]->{type} eq 'ketone' }
@@ -51,6 +52,10 @@ my @rules = (
 
     [ \&is_C, \&is_ketone, \&is_hydroxy, \&anything, NO_MORE_VERTICES, # Carboxyl group
       sub { graph_replace( $_[0], { type => 'carboxyl' }, @_[1..3] ) } ],
+    [ \&is_carboxyl, \&is_headless_C_chain, NO_MORE_VERTICES,
+      sub { $_[2]->{type} = 'C_chain_carboxyl'; $_[2]->{length}++; $_[0]->delete_vertex( $_[1] ) } ],
+    [ \&is_carboxyl, \&is_benzene, NO_MORE_VERTICES,
+      sub { $_[2]->{type} = 'benzoic acid'; $_[0]->delete_vertex( $_[1] ) } ],
 
     [ \&is_C, ( \&is_N ) x 3, NO_MORE_VERTICES, # Guanidine
       sub { graph_replace( $_[0], { type => 'guanidine' }, @_[1..3] ) } ],

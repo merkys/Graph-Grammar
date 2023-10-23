@@ -1,5 +1,8 @@
 package Graph::Grammar;
 
+# ABSTRACT: Grammar for graphs
+# VERSION
+
 use strict;
 use warnings;
 

@@ -3,7 +3,10 @@
 use strict;
 use warnings;
 
-use ChemOnomatopist::Util::Graph qw( graph_replace );
+use ChemOnomatopist::Util::Graph qw(
+    cyclic_components
+    graph_replace
+);
 use Chemistry::OpenSMILES::Parser;
 use Graph::Grammar;
 use Graph::Writer::Dot;
@@ -64,6 +67,13 @@ while( <> ) {
 
     my $parser = Chemistry::OpenSMILES::Parser->new;
     my( $graph ) = $parser->parse( $_ );
+
+    # Deal with cyclic components
+    my @cyclic_components = cyclic_components( $graph );
+    for my $cyclic_component (@cyclic_components) {
+        graph_replace( $graph, { type => 'cycle' }, $cyclic_component->vertices );
+    }
+
     Graph::Grammar::parse( $graph, @rules );
 
     for my $vertex ($graph->vertices) {

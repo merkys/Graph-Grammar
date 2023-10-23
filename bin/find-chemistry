@@ -109,7 +109,7 @@ while( <> ) {
         graph_replace( $graph, $cycle, $cyclic_component->vertices );
     }
 
-    Graph::Grammar::parse( $graph, @rules );
+    parse_graph( $graph, @rules );
 
     for my $vertex ($graph->vertices) {
         $graph->set_vertex_attribute( $vertex, 'label', exists $vertex->{symbol} ? $vertex->{symbol} : $vertex->{type} );

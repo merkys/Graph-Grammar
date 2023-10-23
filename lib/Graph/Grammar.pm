@@ -4,8 +4,7 @@ use strict;
 use warnings;
 
 use parent Exporter::;
-
-our @EXPORT = qw( NO_MORE_VERTICES );
+our @EXPORT = qw( NO_MORE_VERTICES parse_graph );
 
 use ChemOnomatopist::Util::Graph qw( graph_replace );
 use Clone qw( clone );
@@ -13,7 +12,9 @@ use Graph::Grammar::Rule::NoMoreVertices;
 use List::Util qw( first );
 use Set::Object qw( set );
 
-sub parse
+our $DEBUG = 0;
+
+sub parse_graph
 {
     my( $graph, @rules ) = @_;
 
@@ -45,12 +46,12 @@ sub parse
                         next VERTEX unless $match;
                         push @matching_neighbours, $match;
                         $matching_neighbours->insert( $match );
-                    } else {
+                    } else { # FIXME: Check for Graph::Grammar::NoMoreVertices
                         next VERTEX unless $graph->degree( $vertex ) == @matching_neighbours;
                     }
                 }
 
-                print STDERR "apply rule $i\n";
+                print STDERR "apply rule $i\n" if $DEBUG;
 
                 if( ref $action eq 'CODE' ) {
                     $action->( $graph, $vertex, @matching_neighbours );

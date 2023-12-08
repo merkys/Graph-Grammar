@@ -68,6 +68,15 @@ use Set::Object qw( set );
 
 our $DEBUG = 0;
 
+=head1 METHODS
+
+=head2 C<parse_graph( $graph, @rules )>
+
+Perform graph rewriting of C<$graph>.
+Modifies the supplied graph and returns it upon completion.
+
+=cut
+
 sub parse_graph
 {
     my( $graph, @rules ) = @_;
@@ -120,6 +129,18 @@ sub parse_graph
     return $graph;
 }
 
+=head2 C<NO_MORE_VERTICES>
+
+When used before the rule action in a rule, restricts the number of center vertex neighbours to vertex conditions.
+
+=cut
+
 sub NO_MORE_VERTICES { return Graph::Grammar::Rule::NoMoreVertices->new }
+
+=head1 AUTHORS
+
+Andrius Merkys, E<lt>merkys@cpan.orgE<gt>
+
+=cut
 
 1;

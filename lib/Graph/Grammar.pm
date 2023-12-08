@@ -60,9 +60,9 @@ use warnings;
 use parent Exporter::;
 our @EXPORT = qw( NO_MORE_VERTICES parse_graph );
 
-use ChemOnomatopist::Util::Graph qw( graph_replace );
 use Clone qw( clone );
 use Graph::Grammar::Rule::NoMoreVertices;
+use Graph::MoreUtils qw( graph_replace );
 use List::Util qw( first );
 use Set::Object qw( set );
 

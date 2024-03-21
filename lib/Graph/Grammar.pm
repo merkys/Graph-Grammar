@@ -3,6 +3,10 @@ package Graph::Grammar;
 # ABSTRACT: Grammar for graphs
 # VERSION
 
+=head1 NAME
+
+Graph::Grammar - Graph grammar, i.e. rewriting method
+
 =head1 SYNOPSIS
 
     use Graph::Grammar;

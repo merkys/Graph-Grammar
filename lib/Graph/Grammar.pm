@@ -68,6 +68,7 @@ use Clone qw( clone );
 use Graph::Grammar::Rule::NoMoreVertices;
 use Graph::MoreUtils qw( graph_replace );
 use List::Util qw( first );
+use Scalar::Util qw( blessed );
 use Set::Object qw( set );
 
 our $DEBUG = 0;
@@ -96,6 +97,7 @@ sub parse_graph
             my @rule = @$rule;
             my $self_rule = shift @rule;
             my $action = pop @rule;
+            my $no_more_vertices = @rule && blessed $rule[-1] && $rule[-1]->isa( Graph::Grammar::NoMoreVertices:: );
 
             VERTEX:
             for my $vertex ($graph->vertices) {

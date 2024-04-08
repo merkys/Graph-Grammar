@@ -97,7 +97,11 @@ sub parse_graph
             my @rule = @$rule;
             my $self_rule = shift @rule;
             my $action = pop @rule;
-            my $no_more_vertices = @rule && blessed $rule[-1] && $rule[-1]->isa( Graph::Grammar::NoMoreVertices:: );
+            my $no_more_vertices;
+            if( @rule && blessed $rule[-1] && $rule[-1]->isa( Graph::Grammar::NoMoreVertices:: ) ) {
+                $no_more_vertices = 1;
+                pop @rule;
+            }
 
             VERTEX:
             for my $vertex ($graph->vertices) {
@@ -110,16 +114,12 @@ sub parse_graph
                 for my $i (0..$#rule) {
                     my $neighbour_rule = $rule[$i];
                     
-                    if( ref $neighbour_rule eq 'CODE' ) {
-                        my $match = first { !$matching_neighbours->has( $_ ) &&
-                                            $neighbour_rule->( $graph, $_ ) }
-                                          $graph->neighbours( $vertex );
-                        next VERTEX unless $match;
-                        push @matching_neighbours, $match;
-                        $matching_neighbours->insert( $match );
-                    } else { # FIXME: Check for Graph::Grammar::NoMoreVertices
-                        next VERTEX unless $graph->degree( $vertex ) == @matching_neighbours;
-                    }
+                    my $match = first { !$matching_neighbours->has( $_ ) &&
+                                        $neighbour_rule->( $graph, $_ ) }
+                                      $graph->neighbours( $vertex );
+                    next VERTEX unless $match;
+                    push @matching_neighbours, $match;
+                    $matching_neighbours->insert( $match );
                 }
 
                 print STDERR "apply rule $i\n" if $DEBUG;

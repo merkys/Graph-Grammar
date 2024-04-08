@@ -139,7 +139,7 @@ When used before the rule action in a rule, restricts the number of center verte
 
 =cut
 
-sub NO_MORE_VERTICES { return Graph::Grammar::Rule::NoMoreVertices->new }
+sub NO_MORE_VERTICES { Graph::Grammar::Rule::NoMoreVertices->new }
 
 =head1 AUTHORS
 

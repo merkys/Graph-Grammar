@@ -103,6 +103,8 @@ sub parse_graph
                 pop @rule;
             }
 
+            my $affected_vertices = set();
+
             VERTEX:
             for my $vertex ($graph->vertices) {
                 next unless $self_rule->( $graph, $vertex );
@@ -120,6 +122,11 @@ sub parse_graph
                     next VERTEX unless $match;
                     push @matching_neighbours, $match;
                     $matching_neighbours->insert( $match );
+                }
+
+                if(  $affected_vertices->has( $vertex ) ||
+                    ($affected_vertices & $matching_neighbours)->size ) {
+                    # TODO: Notice about overlaps
                 }
 
                 print STDERR "apply rule $i\n" if $DEBUG;

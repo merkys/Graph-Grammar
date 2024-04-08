@@ -102,6 +102,8 @@ sub parse_graph
             VERTEX:
             for my $vertex ($graph->vertices) {
                 next unless $self_rule->( $graph, $vertex );
+                next if $graph->degree( $vertex ) < @rule;
+                next if $no_more_vertices && $graph->degree( $vertex ) > @rule;
 
                 my @matching_neighbours;
                 my $matching_neighbours = set();

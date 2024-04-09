@@ -98,7 +98,7 @@ sub parse_graph
             my $self_rule = shift @rule;
             my $action = pop @rule;
             my $no_more_vertices;
-            if( @rule && blessed $rule[-1] && $rule[-1]->isa( Graph::Grammar::NoMoreVertices:: ) ) {
+            if( @rule && blessed $rule[-1] && $rule[-1]->isa( Graph::Grammar::Rule::NoMoreVertices:: ) ) {
                 $no_more_vertices = 1;
                 pop @rule;
             }

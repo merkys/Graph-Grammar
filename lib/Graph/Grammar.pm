@@ -108,6 +108,7 @@ sub parse_graph
             VERTEX:
             for my $vertex ($graph->vertices) {
                 next unless $self_rule->( $graph, $vertex );
+                next unless defined $graph->degree( $vertex );
                 next if $graph->degree( $vertex ) < @rule;
                 next if $no_more_vertices && $graph->degree( $vertex ) > @rule;
 
@@ -125,7 +126,7 @@ sub parse_graph
                 }
 
                 if(  $affected_vertices->has( $vertex ) ||
-                    ($affected_vertices & $matching_neighbours)->size ) {
+                    ($affected_vertices * $matching_neighbours)->size ) {
                     # TODO: Notice about overlaps
                 }
 

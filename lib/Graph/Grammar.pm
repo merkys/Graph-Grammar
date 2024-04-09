@@ -133,14 +133,16 @@ sub parse_graph
                     $matching_neighbours->insert( $match );
                 }
 
-                if(  $affected_vertices->has( $vertex ) ||
-                    ($affected_vertices * $matching_neighbours)->size ) {
-                    # TODO: Notice about overlaps
-                }
-
                 if( $DEBUG ) {
                     print STDERR defined $rule_name ? "apply rule $i: $rule_name\n" : "apply rule $i\n";
                 }
+
+                my $overlaps = ($affected_vertices * $matching_neighbours)->size +
+                                $affected_vertices->has( $vertex );
+                if( $DEBUG && $overlaps ) {
+                    print STDERR "$overlaps overlapping vertices\n";
+                }
+                $affected_vertices->insert( $vertex, @matching_neighbours );
 
                 if( ref $action eq 'CODE' ) {
                     $action->( $graph, $vertex, @matching_neighbours );

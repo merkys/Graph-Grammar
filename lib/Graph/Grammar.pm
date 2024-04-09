@@ -95,7 +95,15 @@ sub parse_graph
         for my $i (0..$#rules) {
             my $rule = $rules[$i];
             my @rule = @$rule;
+            my $rule_name;
             my $self_rule = shift @rule;
+
+            # First element in the rule could be a rule name
+            if( !ref $self_rule ) {
+                $rule_name = $self_rule;
+                $self_rule = shift @rule;
+            }
+
             my $action = pop @rule;
             my $no_more_vertices;
             if( @rule && blessed $rule[-1] && $rule[-1]->isa( Graph::Grammar::Rule::NoMoreVertices:: ) ) {
@@ -130,7 +138,9 @@ sub parse_graph
                     # TODO: Notice about overlaps
                 }
 
-                print STDERR "apply rule $i\n" if $DEBUG;
+                if( $DEBUG ) {
+                    print STDERR defined $rule_name ? "apply rule $i: $rule_name\n" : "apply rule $i\n";
+                }
 
                 if( ref $action eq 'CODE' ) {
                     $action->( $graph, $vertex, @matching_neighbours );

@@ -56,6 +56,14 @@ Second is to put C<NO_MORE_VERTICES> as the last element of C<@neighbour_conditi
 
     [ sub { 1 }, ( sub { 1 } ) x 2, NO_MORE_VERTICES, sub { [ @_[1..3] ] } ]
 
+Edge conditions are also supported and they always act on the center node and its neighbours matching their individual conditions, i.e.:
+
+    [ $vertex_condition,
+        EDGE { $edge_condition1->( @_ ) }, $vertex_condition1,
+        EDGE { $edge_condition2->( @_ ) }, $vertex_condition2,
+        # ...
+        $action ]
+
 =cut
 
 use strict;
@@ -175,7 +183,7 @@ sub parse_graph
 =head2 C<EDGE>
 
 When used before a neighbour condition, places a condition on edge connecting the center node with a neighbour matched by the following rule.
-Accepts a subroutine reference, i.e.:
+Accepts a block or sub {}, i.e.:
 
     EDGE { $_[0]->get_edge_attribute( $_[1], $_[2], 'color' ) eq 'red' }
 

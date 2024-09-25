@@ -62,9 +62,10 @@ use strict;
 use warnings;
 
 use parent Exporter::;
-our @EXPORT = qw( NO_MORE_VERTICES parse_graph );
+our @EXPORT = qw( EDGE NO_MORE_VERTICES parse_graph );
 
 use Clone qw( clone );
+use Graph::Grammar::Rule::Edge;
 use Graph::Grammar::Rule::NoMoreVertices;
 use Graph::MoreUtils qw( graph_replace );
 use List::Util qw( first );
@@ -156,6 +157,8 @@ sub parse_graph
 
     return $graph;
 }
+
+sub EDGE(&) { Graph::Grammar::Rule::Edge->new( $_[0] ) }
 
 =head2 C<NO_MORE_VERTICES>
 

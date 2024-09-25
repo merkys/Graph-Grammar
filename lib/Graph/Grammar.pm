@@ -165,6 +165,18 @@ sub parse_graph
     return $graph;
 }
 
+=head2 C<EDGE>
+
+When used before a neighbour condition, places a condition on edge connecting the center node with a neighbour matched by the following rule.
+Accepts a subroutine reference, i.e.:
+
+    EDGE { $_[0]->get_edge_attribute( $_[1], $_[2], 'color' ) eq 'red' }
+
+Subroutine is evaluated with three parameters: graph, center node and its neighbour matching the following neighbour condition.
+Subroutine should evaluate to true if condition is fulfilled.
+
+=cut
+
 sub EDGE(&) { Graph::Grammar::Rule::Edge->new( $_[0] ) }
 
 =head2 C<NO_MORE_VERTICES>

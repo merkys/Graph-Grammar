@@ -34,11 +34,11 @@ A rule generally looks like this:
 
 Where:
 
-C<$vertex_condition> is a subroutine reference evaluating the center node.
+C<$vertex_condition> is a subroutine reference evaluating the center vertex.
 The subroutine is called with the graph in C<$_[0]> and the vertex in <$_[1]>.
 Subroutine should evaluate to true if condition is fulfilled.
 
-C<@neighbour_conditions> is an array of subroutine references for the neighbours of the center node.
+C<@neighbour_conditions> is an array of subroutine references for the neighbours of the center vertex.
 Inputs and outputs of each subroutine reference are the same as defined for C<$vertex_condition>.
 Every condition has to match at least one of the neighbours (without overlaps).
 Thus the rule will automatically fail if the number of neighbours is less than C<@neighbour_conditions>.
@@ -47,7 +47,7 @@ C<@neighbour_conditions> can be empty.
 
 C<$action> can be either a subroutine reference, or anything else.
 If C<$action> is a subroutine reference, then in the case of a match it is called with the graph in C<$_[0]> and remaining C<@_> members being graph vertices corresponding to rule conditions.
-That is, C<$_[1]> is the center node, C<$_[2]> is a vertice matching the first neighbour condition and so on.
+That is, C<$_[1]> is the center vertex, C<$_[2]> is a vertex matching the first neighbour condition and so on.
 If C<$action> is not a subroutine reference, then it is cloned by L<Clone> and inserted instead of the center vertex.
 
 There are two ways to request a particular number of neighbours for the central vertex.
@@ -56,7 +56,7 @@ Second is to put C<NO_MORE_VERTICES> as the last element of C<@neighbour_conditi
 
     [ sub { 1 }, ( sub { 1 } ) x 2, NO_MORE_VERTICES, sub { [ @_[1..3] ] } ]
 
-Edge conditions are also supported and they always act on the center node and its neighbours matching their individual conditions, i.e.:
+Edge conditions are also supported and they always act on the center vertex and its neighbours matching their individual conditions, i.e.:
 
     [ $vertex_condition,
         EDGE { $edge_condition1->( @_ ) }, $vertex_condition1,
@@ -182,12 +182,12 @@ sub parse_graph
 
 =head2 C<EDGE>
 
-When used before a neighbour condition, places a condition on edge connecting the center node with a neighbour matched by the following rule.
+When used before a neighbour condition, places a condition on edge connecting the center vertex with a neighbour matched by the following rule.
 Accepts a block or sub {}, i.e.:
 
     EDGE { $_[0]->get_edge_attribute( $_[1], $_[2], 'color' ) eq 'red' }
 
-Subroutine is evaluated with three parameters: graph, center node and its neighbour matching the following neighbour condition.
+Subroutine is evaluated with three parameters: graph, center vertex and its neighbour matching the following neighbour condition.
 Subroutine should evaluate to true if condition is fulfilled.
 
 =cut

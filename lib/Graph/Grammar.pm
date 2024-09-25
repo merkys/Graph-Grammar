@@ -125,11 +125,18 @@ sub parse_graph
                 my $matching_neighbours = set();
                 for my $i (0..$#rule) {
                     my $neighbour_rule = $rule[$i];
+                    next if blessed $neighbour_rule && $neighbour_rule->isa( Graph::Grammar::Rule::Edge:: ); # Edge rules are evaluated separately
                     
                     my $match = first { !$matching_neighbours->has( $_ ) &&
                                         $neighbour_rule->( $graph, $_ ) }
                                       $graph->neighbours( $vertex );
                     next VERTEX unless $match;
+
+                    # Evaluate edge rule, if any
+                    if( $i && blessed $rule[$i-1] && $rule[$i-1]->isa( Graph::Grammar::Rule::Edge:: ) ) {
+                        next unless $rule[$i-1]->matches( $vertex, $match );
+                    }
+
                     push @matching_neighbours, $match;
                     $matching_neighbours->insert( $match );
                 }

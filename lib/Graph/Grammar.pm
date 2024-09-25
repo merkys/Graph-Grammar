@@ -112,14 +112,16 @@ sub parse_graph
                 pop @rule;
             }
 
+            my $neighbours = grep { ref $_ eq 'CODE' } @rule;
+
             my $affected_vertices = set();
 
             VERTEX:
             for my $vertex ($graph->vertices) {
                 next unless $self_rule->( $graph, $vertex );
                 next unless defined $graph->degree( $vertex );
-                next if $graph->degree( $vertex ) < @rule;
-                next if $no_more_vertices && $graph->degree( $vertex ) > @rule;
+                next if $graph->degree( $vertex ) < $neighbours;
+                next if $no_more_vertices && $graph->degree( $vertex ) > $neighbours;
 
                 my @matching_neighbours;
                 my $matching_neighbours = set();

@@ -134,7 +134,7 @@ sub parse_graph
 
                     # Evaluate edge rule, if any
                     if( $i && blessed $rule[$i-1] && $rule[$i-1]->isa( Graph::Grammar::Rule::Edge:: ) ) {
-                        next unless $rule[$i-1]->matches( $vertex, $match );
+                        next VERTEX unless $rule[$i-1]->matches( $graph, $vertex, $match );
                     }
 
                     push @matching_neighbours, $match;

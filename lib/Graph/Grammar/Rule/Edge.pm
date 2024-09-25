@@ -14,8 +14,8 @@ sub new
 
 sub matches
 {
-    my( $self, $a, $b ) = @_;
-    return $self->{code}->( $a, $b );
+    my $self = shift;
+    return $self->{code}->( @_ );
 }
 
 1;
